@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block body %}
+   <div class="container mt-25">
+        <div class="row">
+                <div class="col-md-4 col-xs-12 col-sm-6 col-lg-4">
+                    <div class="card"><img alt="{{ user.username }}" src="{{ user.profile.image.url }}" class="img-circle img-fluid profile-img"></div>
+                    {% if user.profile.cv %}<a target="_self" href="{{ user.profile.cv.url }}">Download my CV</a>{% endif %}
+                </div>
+                    <div class="col-md-8 col-xs-12 col-sm-6 col-lg-8" >
+                        <div>
+                            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                            <p class="no-mb"><b>{{ user.profile.description }}</b></p>
+                            {% if not user == request.user %}
+                            <a class="btn btn-info p-10 no-pv" href="{% url 'account:toggle_follow' user_name=user.username %}">
+                                {% if user in request.user.profile.following.all %}
+                                    UnFollow
+                                {% else %}
+                                    Follow
+                                {% endif %}
+                            </a>
+                            {% endif %}
+                            <p class="no-m no-p" style="color: #0d2c62; vertical-align: center;"><b>Followers: </b>
+                                {{ user.followed_by.all.count|apnumber }}
+
+                                <a style="padding-top: 0" class="btn btn-link" data-toggle="modal" data-target="#showFollowers">
+                                    <small>Show!</small>
+                                </a>
+                            </p>
+                            <p class="no-m no-p">
+                                <b>Following: </b>
+                                {{ user.profile.get_following.count|apnumber }}
+                                <a style="padding-top: 0" class="btn btn-link" data-toggle="modal" data-target="#showFollowing">
+                                    <small>Show!</small>
+                                </a>
+                            </p>
+                                <!--show following model-->
+                                <div class="modal fade" id="showFollowing" tabindex="-1" role="dialog" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header" style="background-color: #0d2c62;">
+                                        <h5 class="modal-title" id="exampleModalLongTitle" style="color: white;"><b>{{ user|title }}'s Following</b></h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true" style="color: white;">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                           {% for us in user.profile.get_following %}
+                                                <a href="{% url 'account:profile' us %}">{{ us }}</a><br>
+                                           {% empty %} no one!
+                                           {% endfor %}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!--show followers model-->
+                                <div class="modal fade" id="showFollowers" tabindex="-1" role="dialog" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header" style="background-color: #0d2c62;">
+                                        <h5 class="modal-title" id="exampleModalLongTitle" style="color: white;"><b>{{ user|title }}'s Followers</b></h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true" style="color: white;">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                           {% for u in user.followed_by.all %}
+                                                <a href="{% url 'account:profile' u.user.username %}">{{ u.user.username }}</a><br>
+                                           {% empty %} no one!
+                                           {% endfor %}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            {% if user.profile.bio %}<hr><p>{{ user.profile.bio|safe }}</p>{% endif %}
+                          </div>
+                           <hr>
+                        <p><b>Posts:</b> {{ user.blog_posts.count|apnumber }} post{{ user.blog_posts.count|pluralize }}</p>
+                          <hr>
+                        <h6><b>Social:</b></h6>
+
+                        <p> {% if user.profile.fb_url %}   <a target="_blank"  href="{{ user.profile.fb_url }}">Facebook</a>{% endif %}
+                            {% if user.profile.tw_url %} | <a target="_blank"  href="{{ user.profile.tw_url }}">Twitter</a>{% endif %}
+                            {% if user.profile.in_url %} | <a target="_blank"  href="{{ user.profile.in_url }}">Instagrame</a>{% endif %}
+                            {% if user.profile.yt_url %} | <a target="_blank"  href="{{ user.profile.yt_url }}">YouTube</a>{% endif %}
+                        </p>
+
+                    </div>
+
+        </div>
+
+
+        {% if posts %}
+            <hr>
+            <h2 class="main-title">Posts</h2>
+            <div class="row">
+            {% for post in posts %}
+
+            <div class="col col-md-4">
+                <div class="card" style="width: 100%;">
+                  <img src="{{ post.image.url }}" class="card-img-top profile-post-img" alt="{{ post }}">
+                  <div class="card-body">
+                    <h6 class="card-text">
+                        <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+                    </h6>
+                  </div>
+                </div>
+            </div>
+
+            {% endfor %}
+            </div>
+        {% endif %}
+
+
+    </div>
+{% endblock %}
+
+

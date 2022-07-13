@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title%}Blog| Delete Post{% endblock %}
+
+{% block body %}
+
+    <div class="container" id="main">
+    {% if posts %}
+        <h1 class="main-title pv-25">Draft Posts</h1>
+        <table class="table table-striped table-bordered">
+        <thead style="background-color: #0d2c62; color: white; letter-spacing: 1.2px;">
+            <tr id="hid1">
+              <th scope="col">#</th>
+              <th scope="col">Title</th>
+              <th scope="col">Last Update</th>
+              <th scope="col">Category</th>
+              <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for post in posts %}
+            <tr id="hid2 " >
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ post }}</td>
+              <td>{{ post.updated }}</td>
+              <td>{{ post.category }}</td>
+              <td>
+                  <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-link">Edit</a>
+                  <button class="btn btn-link" data-toggle="modal" data-target="#deleteConfirm">Delete</button>
+                  <button class="btn btn-link" data-toggle="modal" data-target="#publishConfirm">Publish</button>
+            </tr>
+            <!-- publish cinfirm Modal -->
+            <div class="modal fade" id="publishConfirm" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-success">
+                    <h5 class="modal-title" id="exampleModalLongTitle" style="color: white;"><b>Confirm</b></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to publish this post<br>
+                      <b>{{ post }}</b>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                    <a href="{% url 'blog:post_publish' post.id %}" type="button" class="btn btn-success">Publish</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Delete confirm Modal -->
+            <div class="modal fade" id="deleteConfirm" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger" >
+                    <h5 class="modal-title" id="exampleModalLongTitle" style="color: white;"><b>Warning</b></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete this post<br>
+                      <b>{{ post }}</b>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                    <a href="{% url 'blog:post_delete' post_id=post.id %}" type="button" class="btn btn-danger">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="hero" >
+            <div class="hero-content">
+               <h1 class="hero-title">No Draft Posts</h1>
+               <p class="hero-p pv-15 text-muted">You can add new post <a href="{% url 'blog:add_post' %}">HERE</a></p>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+{% endblock body %}

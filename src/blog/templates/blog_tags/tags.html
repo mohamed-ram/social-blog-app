@@ -1,0 +1,4 @@
+
+{% for tag in tags_list %}
+<li><a href="{% url 'blog:posts_by_tag' tag_slug=tag %}">{{ tag }}</a></li>
+{% endfor %}

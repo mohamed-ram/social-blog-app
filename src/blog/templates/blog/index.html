@@ -1,0 +1,272 @@
+{% extends 'base.html'%}
+{% load static %}
+{% load bootstrap4 %}
+{% load humanize %}
+{% load blog_extras %}
+
+{% block title%}Posts List{% endblock %}
+
+{% block body %}
+
+<section class="site-section py-sm">
+      <div class="container">
+            <div class="row">
+                  <div class="col mv-25">
+                      {% if tag_slug %}
+                        <h2 class="fs-40" style="font-weight: bold; color: #0d2c62;">
+                            Posts include tag: <span class="text-warning">{{ tag_slug|title }}</span>
+                            <span style="float: right;">{{posts_count|length|apnumber|title}} Post{{posts_count|pluralize}}</span>
+                        </h2>
+                        <hr>
+                      {% elif cate %}
+                      <h2 class="fs-40" style="font-weight: bold; color: #0d2c62;">
+                          Posts include Category: <span class="text-warning">{{ cate|title }}</span>
+                          <span style="float: right"> {{posts_count|length|apnumber|title}} Post{{posts_count|pluralize}}</span></h2>
+                      <hr>
+                      {% else %}
+                      <h2 class="fs-40" style="font-weight: bold; color: #0d2c62;">
+                          All blog posts!
+                          <span style="float: right"> {{posts_count|length|apnumber|title}} Post{{posts_count|pluralize}}</span></h2>
+                      <hr>
+                      {% endif %}
+                  </div>
+            </div>
+            <div class="row blog-entries">
+                  <div class="col-md-12 col-lg-8 main-content">
+                        <div class="row">
+                              {% for post in posts %}
+                                    <div class="col-md-6">
+                                          <div class="card mb-25">
+                                                <div class="blog-entry">
+                                                <img src="{{ post.image.url}}" alt="Image">
+                                                <div class="blog-content-body">
+                                                      <a href="{{ post.get_absolute_url }}" ><h2>{{ post.title}}</h2></a>
+                                                      <h6>by <a href="{% url 'account:profile' post.author.username %}">{{ post.author }}</a></h6>
+                                                      <div class="post-meta mv-10">
+                                                            <span class="category">{{ post.category}}</span>
+                                                            <span class="mr-3">{{post.publish_at|date:'F d, Y'}}</span>
+                                                            <span><span class="fa fa-comments"></span> {{post.comments.count|apnumber}}</span>
+                                                      </div>
+                                                </div>
+                                          </div>
+                                          </div>
+                                    </div>
+                              {% endfor %}
+                        </div>
+                      <div class="paginator mv-50">
+                        {% if posts.has_other_pages %}
+                        <nav aria-label="Page navigation example">
+                          <ul class="pagination justify-content-center">
+                            {% if posts.has_previous %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ posts.previous_page_number }}" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            {% endif %}
+                              {% for i in posts.paginator.page_range %}
+                                  {% if posts.number == i %}
+                                   <li class="page-item active" aria-current="page">
+                                      <span class="page-link">
+                                        {{ i }}
+                                        <span class="sr-only">(current)</span>
+                                      </span>
+                                    </li>
+                                  {% else %}
+                                    <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                  {% endif %}
+                              {% endfor %}
+
+                            {% if posts.has_next %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+                            </li>
+                            {% endif %}
+                          </ul>
+                        </nav>
+                        {% endif %}
+                      </div>
+<!-- ---------------  horizontal posts ------------------ -->
+                        <div class="row mb-5 mt-5">
+                              <div class="col">
+                                  <h2 class="fs-40" style="font-weight: bold; color: #0d2c62;">Latest Posts</h2>
+                                  <hr>
+                              </div>
+                              <div class="col-md-12">
+                              {% for post in latest_posts %}
+                                    <div class="post-entry-horzontal">
+                                    <a href="{% url 'blog:post_detail' post.slug%}">
+                                    <div class="image" style="background-image: url({{ post.image.url }});"></div>
+                                    <span class="text">
+
+                                          <div class="post-meta mv-10">
+                                                <span class="category">{{ post.category}}</span>
+                                                <span class="mr-2">{{post.created_at|date:'F m, Y'}}</span> &bullet;&bullet;&bullet;
+                                                <span class="ml-2">
+                                                    <span class="fa fa-comments"></span>
+                                                    {{ post.comments.count|apnumber|title }} Comment{{post.comments|pluralize}}
+                                                </span><br>
+                                              <span>by| {{ post.author }}</span>
+                                          </div>
+                                          <h2>{{ post|truncatechars:100}}</h2>
+
+                                    </span>
+                                    </a>
+                              </div>
+                              {% endfor %}
+
+                              </div>
+                         </div>
+<!-- ------------- end horizontal posts ---------------- -->
+<!-- --------------- upcoming  horizontal posts ------------------ -->
+                  {% if upcoming_posts %}
+                        <div class="row mb-5 mt-5">
+                              <div class="col-md-12">
+                                  <h2 class="fs-40" style="font-weight: bold; color: #0d2c62;">Upcoming Posts</h2>
+                                  <hr>
+                              </div>
+                              <div class="col-md-12">
+                                  <div class="row">
+                                      {% for up_post in upcoming_posts %}
+                                      <div class="col-md-4">
+                                          <div class="card">
+                                              <img class="card-img-top" src="{{up_post.image.url }}" alt="Card image cap">
+                                              <div class="card-body p-3">
+                                                <a href="{% url 'blog:post_detail' slug=up_post.slug %}" class="card-text" style="color: #0d2c62;">{{ up_post.title}}</a>
+                                                  <hr>
+                                                <p class="card-text"><b>will be publish_at at: </b><br>{{ up_post.publish_at|date:"N d | h: i A"}}</p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      {% endfor %}
+                                  </div>
+                              </div>
+                         </div>
+                  {% endif %}
+<!-- ------------- end horizontal posts ---------------- -->
+                  </div>
+
+<!--============================================================================-->
+<!--===========================Right Side bar ==================================-->
+
+
+                  <div class="col-md-12 col-lg-4 sidebar">
+<!------------ search----------------------->
+                        <div class="sidebar-box search-form-wrap">
+                              <form action="{% url 'blog:search' %}" class="search-form" method="get">
+                                    <div class="input-group">
+{#                                  <a href="{% url 'blog:search' %}"><span class="icon fa fa-search" style="color: #0d2c62;"></span></a>#}
+                                    <input onfocus="appearButton()" id="searchInput" name="q" value="{{ request.GET.q }}" type="text" class="form-control" placeholder="Search">
+                                    <div id="go_button" class="input-group-append">
+                                        <input style="background-color: #0d2c62; color: white;" class="btn no-pv" type="submit" value="Go">
+                                    </div>
+                                    </div>
+                              </form>
+
+
+                        </div>
+<!---------end search----------------------->
+<!------------about me ----------------->
+                        <div class="sidebar-box">
+                              <div class="bio text-center">
+                                    {% static 'img/user.png' as def_image%}
+                                    <img src="{% if user.profile.image %}
+                                                {{ user.profile.image.url }}
+                                              {% else %}
+                                                {% static 'img/user.png' %}
+                                              {% endif %}" alt="Image" class="img-fluid">
+                                    <div class="bio-body">
+                                        <a href="{% url 'account:profile' user_name=user.username %}"><h2>{{ user.first_name }} {{ user.last_name }}</h2></a>
+                                          {% if user.profile.description %}<p style="color: #0d2c62">{{ user.profile.description }}</p>{% endif %}
+                                          <h6 style="color: #0d2c62">@{{ user.username }} | {{ user.blog_posts.count }} Post{{ user.blog_posts.count|pluralize }} </h6>
+                                            <p class="no-m no-p" style="color: #0d2c62; vertical-align: center;">
+                                                <b>Followers: </b>
+                                                {{ user.followed_by.all.count|apnumber }} |
+                                                <b>Following: </b>
+                                                {{ user.profile.get_following.count|apnumber }}
+                                            </p><hr>
+
+                                          <p class="social">
+
+                                                <a href="https://www.facebook.com/profile.php?id=100007806277229" class="p-2"><span class="fa fa-facebook"></span></a>
+                                                <a href="https://twitter.com/moh_amed_ram" class="p-2 mh-5"><span class="fa fa-twitter"></span></a>
+                                                <a href="https://www.instagram.com/moh_amed_ram/" class="p-2 mh-10"><span class="fa fa-instagram"></span></a>
+                                                <a href="https://www.youtube.com/channel/UC8qNGozRB5qZCn4w6OcMBOA/" class="p-2"><span class="fa fa-youtube-play"></span></a>
+                                          </p><hr>
+                                        <a href="{% url 'blog:add_post' %}">add new post</a>
+                                        <a disabled>|</a>
+                                        <a href="{% url 'account:edit_profile' %}">edit profile</a>
+                                        <a disabled>|</a>
+                                        <a href="{% url 'account:edit_info' %}">Edit info</a>
+                                    </div>
+                        </div>
+                        </div>
+                        <div class="sidebar-box p-10">
+                              <h6 >Writers to follow</h6><hr>
+                              <ul class="categories">
+                                  {% writers_to_follow request %}
+                              </ul>
+                        </div>
+<!--------end about me ----------------->
+{#                  {% if user.is_superuser %}#}
+{#                      <div class="sidebar-box p-10 text-center" style="background-color: #0d2c62;">#}
+{#                          <a style="color: white;" href="{% url 'blog:add_post'  %}">Add New Post</a>#}
+{#                      </div>#}
+{#                  {% endif %}#}
+<!-------- categories  ----------------->
+                        <div class="sidebar-box p-10">
+                        <h6>Categories</h6><hr>
+                        <ul class="categories">
+{#                              {% for category in categories %}#}
+{#                                  {% if category.post_set.count != 0 %}#}
+{#                                  <li><a href="{% url 'blog:posts_by_category' cate=category %}">{{category}}#}
+{#                                     <span>({{category.post_set.count}})</span></a>#}
+{#                                  </li>#}
+{#                                  {% endif %}#}
+{#                              {% endfor %}#}
+                            {% for category, num in cate_num.items %}
+                                <li>
+                                    <a href="{% url 'blog:posts_by_category' cate=category %}">
+                                        {{category}}<span>({{ num }})</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        </div>
+<!-------end categories  ----------------->
+<!---------------- tags  ----------------->
+                  {% if posts %}
+                        <div class="sidebar-box p-10">
+                              <h6 >Tags</h6><hr>
+                              <ul class="tags">
+                                  {% tags %}
+                              </ul>
+                        </div>
+                  {% endif %}
+<!------------ end tags  ----------------->
+<!---------------- contact me ---------------->
+
+                      <div class="sidebar-box p-10">
+                          <h6>Contact Me</h6><hr>
+                          <form method="POST" class="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form layout='inline' %}
+                                {% buttons %}
+                                    <button type="submit" class="btn btn-prim-color btn-block">Submit</button>
+                                {% endbuttons %}
+                          </form>
+                      </div>
+<!---------------- end contact me ---------------->
+                  </div>
+            </div>
+      </div>
+</section>
+    <script>
+    searchInput = document.getElementById('searchInput')
+    go = document.getElementById('go_button').style.display = 'none'
+    function appearButton() {
+        document.getElementById('go_button').style.display = ''
+    }
+    function disappearButton() {
+        document.getElementById('go_button').style.display = 'none'
+    }
+    </script>
+{% endblock body %}

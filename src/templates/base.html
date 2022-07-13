@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+{#<!--  medium editor  -->#}
+{#    <script src="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>#}
+{#    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8">#}
+  <link
+  href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css"
+  rel="stylesheet"  type='text/css'>
+
+    <link rel="stylesheet" href="{% static 'css/blog-style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <title>{% block title%}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0d2c62; height: 60px; border-bottom: none;">
+        <div class="container">
+          <a class="navbar-brand" href="{% url 'blog:home' %}">Social Blog</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                  {% url 'blog:posts_list' as all_posts %}
+                  <a class="nav-link {%  if request.path == all_posts %} active {%  endif %}" href="{{ all_posts }}">Home</a>
+              </li>
+              <li class="nav-item">
+                  {% url 'blog:post_draft' as draft %}
+                  <a class="nav-link {%  if request.path == draft %} active {%  endif %}" href="{{ draft }}">Draft</a>
+              </li>
+              <li class="nav-item">
+                  {% url 'blog:dashboard' as dash %}
+                  <a class="nav-link {%  if request.path == dash %} active {%  endif %}" href="{{ dash }}">DashBoard</a>
+              </li>
+{#              <li class="nav-item">#}
+{#                  {% url 'account:edit_info' as edit_info %}#}
+{#                  <a class="nav-link {%  if request.path == edit_info %} active {%  endif %}" href="{{ edit_info }}">Edit info</a>#}
+{#              </li>#}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'account:logout' %}">Logout</a>
+              </li>
+              <li class="nav-item">
+                  <a href="{% url 'account:profile' user_name=request.user.username %}">
+                      <div class="ml-15" >
+                          <img class="home-avatar"
+                             src="{% if request.user.profile.image %}
+                                     {{ request.user.profile.image.url }}
+                                  {% else %}{% static 'img/user.png' %}{% endif %}">
+                      </div>
+                  </a>
+              </li>
+
+              {% else %}
+                <li class="nav-item">
+                {% url 'account:register' as register %}
+                  <a class="nav-link {%  if request.path == register %} active {%  endif %}" href="{{ register }}">Register</a>
+                </li>
+                <li class="nav-item">
+                {% url 'account:login' as login %}
+                  <a class="nav-link {%  if request.path == login %} active {%  endif %}" href="{{ login }}">Login</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message|safe }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% block body %}
+    {% endblock body %}
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>

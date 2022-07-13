@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title%}Blog| Posts{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        {% for post in post_list%}
+        <div class="col-md-6">
+            <a href="{% url 'blog:post_detail' post.slug %}" class="blog-entry" >
+            <img src="{{ post.image.url}}" alt="Image placeholder">
+            <div class="blog-content-body">
+                <div class="post-meta">
+                    <span class="category">Food</span>
+                    <span class="mr-2">March 15, 2018 </span> &bullet;
+                    <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                </div>
+            </div>
+        </a>
+        </div>
+       {% endfor %}
+    </div>
+</div>
+{% endblock body %}

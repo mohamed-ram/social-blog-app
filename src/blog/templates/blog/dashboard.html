@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}DashBoard{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2 class="main-title mv-25">DashBoard</h2>
+        <hr>
+        <h2 class="main-title pv-25">Welcome {{ user.first_name }} {{ user.last_name }}!</h2>
+        <a href="{% url 'blog:post_draft' %}">Drafts</a> |
+        <a href="{% url 'blog:add_post' %}">Add new post</a>
+    </div>
+{% endblock %}

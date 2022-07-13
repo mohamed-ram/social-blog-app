@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+   Home Page
+{% endblock title %}
+
+<!--------content------------->
+
+{% block body %}
+<div class="hero" >
+{% if user.username %}
+    <div class="hero-content">
+       <h1 class="hero-title">Welcome,<br>{{ user.first_name }} {{ user.last_name }}</h1>
+       <p class="hero-p pv-15 text-muted">Share your ideas with others!</p>
+       <p class="hero-p text-muted"><a href="{% url 'blog:add_post' %}">Add new post </a></p>
+    </div>
+{% else %}
+    <div class="hero-content">
+       <h1 class="hero-title">Welcom To Blog App</h1>
+       <p class="hero-p pv-15 text-muted">Amazing blog web app powered by Django</p>
+       <p class="hero-p text-muted"><a href="{% url 'account:login' %}">Login </a> or <a
+               href="{% url 'account:register' %}"> Create New Account</a> to start!</p>
+    </div>
+{% endif %}
+</div>
+
+{% endblock body %}

@@ -1,0 +1,14 @@
+{% for writer in writers %}
+{% if not writer in request.user.profile.get_following %}
+<li>
+    <p>
+        <a style="float: left" href="{% url 'account:profile' writer.username %}">
+            {{ writer.username }}
+        </a>
+        <a class="ph-5 bg-info text-light" style="float: right;" href="{% url 'account:toggle_follow' writer.username  %}">
+                follow
+        </a><br>
+    </p>
+</li>
+{% endif %}
+{% endfor %}
